@@ -61,7 +61,7 @@ mesh = SubResource("PlaneMesh_w81ou")
 
 [node name="Player" type="CharacterBody3D" parent="." unique_id=1976784279]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4151525, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("1_o5qli")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=595139959]
@@ -73,6 +73,7 @@ mesh = SubResource("CapsuleMesh_w81ou")
 [node name="TimeRewinder" type="Node" parent="." unique_id=846097797]
 unique_name_in_owner = true
 script = ExtResource("2_0wfyh")
+rewind_duration = 4.0
 rewind_resources = Array[ExtResource("3_sugp2")]([SubResource("Resource_w81ou")])
-speed_scale = 3.0
+speed_scale = 2.0
 metadata/_custom_type_script = "uid://ds5bsniyms4s8"

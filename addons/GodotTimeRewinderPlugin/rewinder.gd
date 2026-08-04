@@ -1,7 +1,9 @@
 extends Node
-
-@export var rewind_duration: float = 3.0  # Duration to rewind in game time (seconds)
+## Duration to rewind in game time (seconds)
+@export var rewind_duration: float = 3.0 
+## Enable delta encoding optimization
 @export var delta_encoding: bool = false
+## Properties to rewind
 @export var rewind_resources: Array[RewindResource] = []
 @export_range(0.5, 4, 0.5) var speed_scale: float = 1.0  # Speed multiplier for the rewind effect
 signal done_rewinding
@@ -12,24 +14,42 @@ var game_time_accumulated: float = 0.0
 var real_time_accumulated: float = 0.0  # Total real time passed in the rewind process
 var rewind_accumulator: float = 0.0  # Real-time accumulator for rewind progression
 
+var total_frames_saved: int = 0
+var frame_popped: int = 0
+
 func _ready():
 	# Initialize values
-	total_time_to_rewind = rewind_duration * speed_scale
+	total_time_to_rewind = rewind_duration / speed_scale
 	print("Total time to rewind: ", total_time_to_rewind)  # Debug print
+	total_frames_saved = int(rewind_duration * Engine.physics_ticks_per_second)
+	for rewind_resource in rewind_resources:
+		rewind_resource.frames_to_store = total_frames_saved
 
-func _process(delta: float):
+func _physics_process(delta: float) -> void:
 	if rewinding:
 		compute_rewind(delta)
 	else:
 		update_rewind_values()
 
 func update_rewind_values():
-	# Loop through all the rewind resources and save the current values
-	for rewind_resource in rewind_resources:
-		var node = get_node_or_null(rewind_resource.node_path)
-		if node:
-			var value = node.get(rewind_resource.property_name)
-			rewind_resource.add_value(value)
+	if not delta_encoding:
+		# Loop through all the rewind resources and save the current values
+		for rewind_resource in rewind_resources:
+			var node = get_node_or_null(rewind_resource.node_path)
+			if node:
+				var value = node.get(rewind_resource.property_name)
+				rewind_resource.add_value(value)
+	else:
+		for rewind_resource in rewind_resources:
+			var node = get_node_or_null(rewind_resource.node_path)
+			if node:
+				var value = node.get(rewind_resource.property_name)
+				if rewind_resource.values.is_empty():
+					rewind_resource.add_value(value)
+				else:
+					rewind_resource.add_value(value - rewind_resource.last_value)
+					
+				rewind_resource.last_value = value
 
 func compute_rewind(delta: float):
 	# Accumulate the real time passed, accounting for the multiplier
@@ -53,15 +73,18 @@ func compute_rewind(delta: float):
 			stop_rewind()
 			return
 		
-		if not delta:
+		if not delta_encoding:
 			# Pop values from the rewind resources
 			for rewind_resource in rewind_resources:
 				var node = get_node_or_null(rewind_resource.node_path)
+				
 				if node:
 					for i in range(frames_to_pop):
-						var last_value = rewind_resource.pop_value()
+						var last_value = rewind_resource.get_value_n_frames_ago(i + frame_popped)
+						frame_popped += 1
 						if last_value != null:
 							node.set(rewind_resource.property_name, last_value)
+					
 		
 		else:
 			# Pop values from the rewind resources
@@ -71,8 +94,12 @@ func compute_rewind(delta: float):
 					for i in range(frames_to_pop):
 						var last_value = rewind_resource.pop_value()
 						if last_value != null:
-							node.set(rewind_resource.property_name, last_value)
-
+							if rewind_resource.values.is_empty():
+								node.set(rewind_resource.property_name, last_value)
+							else:
+								var current_value = node.get(rewind_resource.property_name)
+								node.set(rewind_resource.property_name, current_value - last_value)
+		
 		# Subtract the number of frames popped from the accumulator
 		rewind_accumulator -= frames_to_pop
 		print("Rewind accumulator after popping: ", rewind_accumulator)  # Debug print
@@ -81,9 +108,23 @@ func rewind():
 	rewinding = true
 	real_time_accumulated = 0.0  # Reset real time accumulator
 	rewind_accumulator = 0.0  # Reset the rewind accumulator
+	frame_popped = 0
+	for rewind_resource in rewind_resources:
+		disable_physics(get_node_or_null(rewind_resource.node_path))
+		print(rewind_resource.get_size())
 	print("Rewind started.")  # Debug print
 
 func stop_rewind():
 	rewinding = false
 	done_rewinding.emit()
+	for rewind_resource in rewind_resources:
+		enable_physics(get_node_or_null(rewind_resource.node_path))
 	print("Rewind stopped.")  # Debug print
+
+func disable_physics(node : Node):
+	if node is CollisionObject3D or node is CollisionObject2D:
+		node.process_mode = Node.PROCESS_MODE_DISABLED
+
+func enable_physics(node : Node):
+	if node is CollisionObject3D or node is CollisionObject2D:
+		node.process_mode = Node.PROCESS_MODE_INHERIT
