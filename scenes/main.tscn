@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://cpqyxqaijcaqu"]
+
+[ext_resource type="Script" uid="uid://uvmnbv3s03n5" path="res://scripts/main.gd" id="1_jyhfs"]
+[ext_resource type="Script" uid="uid://dcurmccsqs8le" path="res://scripts/player.gd" id="1_o5qli"]
+[ext_resource type="Script" uid="uid://ds5bsniyms4s8" path="res://addons/GodotTimeRewinderPlugin/rewinder.gd" id="2_0wfyh"]
+[ext_resource type="Script" uid="uid://emle42rpew16" path="res://addons/GodotTimeRewinderPlugin/rewind_property.gd" id="3_sugp2"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sgp6g"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_o5qli"]
+sky_material = SubResource("ProceduralSkyMaterial_sgp6g")
+
+[sub_resource type="Environment" id="Environment_0wfyh"]
+background_mode = 2
+sky = SubResource("Sky_o5qli")
+glow_enabled = true
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_w81ou"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_w81ou"]
+size = Vector2(20, 20)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8vqkf"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_w81ou"]
+
+[sub_resource type="Resource" id="Resource_w81ou"]
+script = ExtResource("3_sugp2")
+node_path = NodePath("../Player")
+property_name = "position"
+metadata/_custom_type_script = "uid://emle42rpew16"
+
+[node name="Main" type="Node3D" unique_id=718706382]
+script = ExtResource("1_jyhfs")
+
+[node name="Other" type="Node3D" parent="." unique_id=1354569614]
+
+[node name="Camera3D" type="Camera3D" parent="Other" unique_id=314721266]
+transform = Transform3D(1, 0, 0, 0, 0.34202015, 0.9396926, 0, -0.9396926, 0.34202015, 0, 13.08293, 7.1230826)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Other" unique_id=55108530]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Other" unique_id=722602524]
+environment = SubResource("Environment_0wfyh")
+
+[node name="Fixed" type="Node3D" parent="." unique_id=1010089308]
+
+[node name="Floor" type="StaticBody3D" parent="Fixed" unique_id=317218822]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Fixed/Floor" unique_id=1756996236]
+shape = SubResource("WorldBoundaryShape3D_w81ou")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Fixed/Floor" unique_id=708433702]
+mesh = SubResource("PlaneMesh_w81ou")
+
+[node name="Moving" type="Node3D" parent="." unique_id=2013076882]
+
+[node name="Player" type="CharacterBody3D" parent="." unique_id=1976784279]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4151525, 0)
+script = ExtResource("1_o5qli")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=595139959]
+shape = SubResource("CapsuleShape3D_8vqkf")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Player" unique_id=535183344]
+mesh = SubResource("CapsuleMesh_w81ou")
+
+[node name="TimeRewinder" type="Node" parent="." unique_id=846097797]
+unique_name_in_owner = true
+script = ExtResource("2_0wfyh")
+rewind_resources = Array[ExtResource("3_sugp2")]([SubResource("Resource_w81ou")])
+speed_scale = 3.0
+metadata/_custom_type_script = "uid://ds5bsniyms4s8"
