@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://uvmnbv3s03n5" path="res://scripts/main.gd" id="1_jyhfs"]
 [ext_resource type="Script" uid="uid://dcurmccsqs8le" path="res://scripts/player.gd" id="1_o5qli"]
-[ext_resource type="Script" uid="uid://ds5bsniyms4s8" path="res://addons/GodotTimeRewinderPlugin/rewinder.gd" id="2_0wfyh"]
-[ext_resource type="Script" uid="uid://emle42rpew16" path="res://addons/GodotTimeRewinderPlugin/rewind_property.gd" id="3_sugp2"]
+[ext_resource type="Script" uid="uid://df8j48hw0hkd6" path="res://addons/GodotTimeRewinderPlugin/rewinder_delta.gd" id="3_jyhfs"]
+[ext_resource type="Script" uid="uid://bgh0vw6iftaaw" path="res://addons/GodotTimeRewinderPlugin/rewind_tracked_node_delta.gd" id="4_jyhfs"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sgp6g"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -22,15 +22,27 @@ glow_enabled = true
 [sub_resource type="PlaneMesh" id="PlaneMesh_w81ou"]
 size = Vector2(20, 20)
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_w81ou"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_8vqkf"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_8vqkf"]
+
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8vqkf"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_w81ou"]
 
-[sub_resource type="Resource" id="Resource_w81ou"]
-script = ExtResource("3_sugp2")
+[sub_resource type="Resource" id="Resource_sugp2"]
+script = ExtResource("4_jyhfs")
 node_path = NodePath("../Player")
-property_name = "position"
-metadata/_custom_type_script = "uid://emle42rpew16"
+properties = ["position", "rotation", "velocity", "scale"]
+metadata/_custom_type_script = "uid://bgh0vw6iftaaw"
+
+[sub_resource type="Resource" id="Resource_jyhfs"]
+script = ExtResource("4_jyhfs")
+node_path = NodePath("../Moving/Ball")
+properties = ["position", "rotation", "scale", "angular_velocity", "linear_velocity"]
+metadata/_custom_type_script = "uid://bgh0vw6iftaaw"
 
 [node name="Main" type="Node3D" unique_id=718706382]
 script = ExtResource("1_jyhfs")
@@ -59,6 +71,19 @@ mesh = SubResource("PlaneMesh_w81ou")
 
 [node name="Moving" type="Node3D" parent="." unique_id=2013076882]
 
+[node name="Ball" type="RigidBody3D" parent="Moving" unique_id=105710408]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.367663, 0.5, 1.6791406)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Moving/Ball" unique_id=701251056]
+shape = SubResource("SphereShape3D_w81ou")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Moving/Ball" unique_id=16941507]
+mesh = SubResource("SphereMesh_8vqkf")
+
+[node name="SoftBody3D" type="SoftBody3D" parent="Moving" unique_id=1761047207]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.176259, 0.5, 1.6429944)
+mesh = SubResource("BoxMesh_8vqkf")
+
 [node name="Player" type="CharacterBody3D" parent="." unique_id=1976784279]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -70,10 +95,12 @@ shape = SubResource("CapsuleShape3D_8vqkf")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Player" unique_id=535183344]
 mesh = SubResource("CapsuleMesh_w81ou")
 
-[node name="TimeRewinder" type="Node" parent="." unique_id=846097797]
+[node name="TimeRewinder" type="Node" parent="." unique_id=483581032]
 unique_name_in_owner = true
-script = ExtResource("2_0wfyh")
-rewind_duration = 4.0
-rewind_resources = Array[ExtResource("3_sugp2")]([SubResource("Resource_w81ou")])
-speed_scale = 2.0
-metadata/_custom_type_script = "uid://ds5bsniyms4s8"
+script = ExtResource("3_jyhfs")
+rewind_duration = 30.0
+keyframes_modulo = 60
+precision = 2
+bytes_per_delta = 2
+tracked_nodes = Array[ExtResource("4_jyhfs")]([SubResource("Resource_sugp2"), SubResource("Resource_jyhfs")])
+metadata/_custom_type_script = "uid://df8j48hw0hkd6"

@@ -10,4 +10,7 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("rewind"):
-		time_rewinder.rewind()
+		if time_rewinder.rewinding:
+			time_rewinder.stop_rewind()
+		else:
+			time_rewinder.rewind()
