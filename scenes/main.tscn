@@ -35,7 +35,7 @@ size = Vector2(20, 20)
 [sub_resource type="Resource" id="Resource_sugp2"]
 script = ExtResource("4_jyhfs")
 node_path = NodePath("../Player")
-properties = ["position", "rotation", "velocity", "scale"]
+properties = ["position", "rotation", "velocity", "scale", "visible"]
 metadata/_custom_type_script = "uid://bgh0vw6iftaaw"
 
 [sub_resource type="Resource" id="Resource_jyhfs"]
@@ -101,6 +101,5 @@ script = ExtResource("3_jyhfs")
 rewind_duration = 30.0
 keyframes_modulo = 60
 precision = 2
-bytes_per_delta = 2
 tracked_nodes = Array[ExtResource("4_jyhfs")]([SubResource("Resource_sugp2"), SubResource("Resource_jyhfs")])
 metadata/_custom_type_script = "uid://df8j48hw0hkd6"

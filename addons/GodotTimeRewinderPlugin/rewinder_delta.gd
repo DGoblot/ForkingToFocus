@@ -5,9 +5,9 @@ extends Node
 ## [b]The number of frames to store (Time recorded * Physics ticks per seconds) must be divisible by keyframes_modulo[/b]
 @export var keyframes_modulo: int = 35
 ## Amount of quantization
-@export_enum("1e-9:9", "1e-8:8", "1e-7:7", "1e-6:6", "1e-5:5", "0.0001:4", "0.001:3", "0.01:2", "0.1:1", "1:0") var precision: int = 1
+@export_enum("1e-6:6", "1e-5:5", "0.0001:4", "0.001:3", "0.01:2", "0.1:1", "1:0") var precision: int = 3
 ## Number of bytes allocated for delta encoding
-@export_enum("1:1", "2:2", "4:4") var bytes_per_delta: int = 1
+@export_enum("1:1", "2:2", "4:4") var bytes_per_delta: int = 2
 ## Properties to rewind
 @export var tracked_nodes : Array[RewindTrackedNodeDelta] = []
 @export_range(0.5, 4, 0.5) var speed_scale: float = 1.0  # Speed multiplier for the rewind effect

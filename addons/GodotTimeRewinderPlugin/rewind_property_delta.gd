@@ -43,6 +43,9 @@ func get_value_n_frames_ago(n : int):
 
 func create_buffer(type: Variant.Type) -> void:
 	value_type = type
+	if value_type == TYPE_BOOL:
+		precision = 1.0
+		bytes_per_delta = 1
 	component_count = get_component_count(type)
 	bytes_for_keyframe = 1 + component_count * 4
 	bytes_for_delta =  1 + component_count * bytes_per_delta
@@ -161,7 +164,7 @@ func get_component_count(type: Variant.Type) -> int:
 func to_components(value: Variant) -> Array:
 	match typeof(value):
 		TYPE_BOOL:
-			return [bool(value)]
+			return [1.0 if value else 0.0]
 		TYPE_INT:
 			return [int(value)]
 		TYPE_FLOAT:
