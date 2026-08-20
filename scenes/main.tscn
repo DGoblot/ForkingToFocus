@@ -26,11 +26,22 @@ size = Vector2(20, 20)
 
 [sub_resource type="SphereMesh" id="SphereMesh_8vqkf"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_8vqkf"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tefeu"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_jyhfs"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_jyhfs"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o6xl0"]
+albedo_color = Color(0, 0, 1, 1)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8vqkf"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_w81ou"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tbgi4"]
+albedo_color = Color(1, 0, 0, 1)
 
 [sub_resource type="Resource" id="Resource_sugp2"]
 script = ExtResource("4_jyhfs")
@@ -79,10 +90,17 @@ shape = SubResource("SphereShape3D_w81ou")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Moving/Ball" unique_id=16941507]
 mesh = SubResource("SphereMesh_8vqkf")
+surface_material_override/0 = SubResource("StandardMaterial3D_tefeu")
 
-[node name="SoftBody3D" type="SoftBody3D" parent="Moving" unique_id=1761047207]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.176259, 0.5, 1.6429944)
-mesh = SubResource("BoxMesh_8vqkf")
+[node name="Ball2" type="RigidBody3D" parent="Moving" unique_id=2124304110]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2980466, 0.5000001, -5.0945325)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Moving/Ball2" unique_id=362928798]
+shape = SubResource("SphereShape3D_jyhfs")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Moving/Ball2" unique_id=1888899194]
+mesh = SubResource("SphereMesh_jyhfs")
+surface_material_override/0 = SubResource("StandardMaterial3D_o6xl0")
 
 [node name="Player" type="CharacterBody3D" parent="." unique_id=1976784279]
 unique_name_in_owner = true
@@ -94,12 +112,12 @@ shape = SubResource("CapsuleShape3D_8vqkf")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Player" unique_id=535183344]
 mesh = SubResource("CapsuleMesh_w81ou")
+surface_material_override/0 = SubResource("StandardMaterial3D_tbgi4")
 
 [node name="TimeRewinder" type="Node" parent="." unique_id=483581032]
 unique_name_in_owner = true
 script = ExtResource("3_jyhfs")
 rewind_duration = 30.0
-keyframes_modulo = 60
 precision = 2
 tracked_nodes = Array[ExtResource("4_jyhfs")]([SubResource("Resource_sugp2"), SubResource("Resource_jyhfs")])
 metadata/_custom_type_script = "uid://df8j48hw0hkd6"

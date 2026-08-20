@@ -3,7 +3,7 @@ extends Node
 @export var rewind_duration: float = 10.0
 ## Number of frames between keyframes [br]
 ## [b]The number of frames to store (Time recorded * Physics ticks per seconds) must be divisible by keyframes_modulo[/b]
-@export var keyframes_modulo: int = 35
+@export var keyframes_modulo: int = 60
 ## Amount of quantization
 @export_enum("1e-6:6", "1e-5:5", "0.0001:4", "0.001:3", "0.01:2", "0.1:1", "1:0") var precision: int = 3
 ## Number of bytes allocated for delta encoding
@@ -96,6 +96,21 @@ func stop_rewind() -> void:
 		enable_physics(get_node_or_null(tracked_node.node_path))
 		tracked_node.reset()
 	print("Rewind stopped.")  # Debug print
+	
+func add_rewindable_node(node_path: NodePath, properties: Array[String], new_keyframes_modulo: int = keyframes_modulo, new_precision: int = precision, new_bytes_per_delta: int = bytes_per_delta) -> void:
+	if not [1,2,4].has(new_bytes_per_delta):
+		push_error("Bytes per delta must be 1, 2 or 4")
+		return
+	if not [0, 1, 2, 3, 4, 5, 6].has(new_precision):
+		push_error("Precision must be in [1e-6:6, 1e-5:5, 0.0001:4, 0.001:3, 0.01:2, 0.1:1, 1:0]")
+		return
+		
+	var new_tracked_node:= RewindTrackedNodeDelta.new()
+	new_tracked_node.node_path = node_path
+	new_tracked_node.properties = PackedStringArray(properties)
+	new_tracked_node.setup(total_frames_saved, new_keyframes_modulo, new_precision, new_bytes_per_delta)
+	
+	tracked_nodes.append(new_tracked_node)
 
 func disable_physics(node : Node) -> void:
 	if node is CollisionObject3D or node is CollisionObject2D:
