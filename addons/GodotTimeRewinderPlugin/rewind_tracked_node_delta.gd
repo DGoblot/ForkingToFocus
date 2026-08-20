@@ -38,11 +38,15 @@ func setup(frames_to_store: int, keyframes_modulo: int, precision: int, bytes_pe
 		if frames_to_store % keyframes_modulo == 0:
 			values.keyframes_modulo = keyframes_modulo
 		else:
+			push_error("The number of frames to store (Time recorded * Physics ticks per seconds) must be divisible by Keyframe modulo")
 			assert(false, "The number of frames to store (Time recorded * Physics ticks per seconds) must be divisible by Keyframe modulo")
+			continue
 		if bytes_per_delta == 1 or bytes_per_delta == 2 or bytes_per_delta == 4:
 			values.bytes_per_delta = bytes_per_delta
 		else:
+			push_error("Bytes per delta must be 1, 2 or 4")
 			assert(false, "Bytes per delta must be 1, 2 or 4")
+			continue
 			
 		values_list[property] = values
  

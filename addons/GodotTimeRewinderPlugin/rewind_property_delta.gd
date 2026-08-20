@@ -145,7 +145,9 @@ func decode_delta_components(source: PackedByteArray, index: int) -> Array:
 			4:
 				result.append(source.decode_s32(index + 1  +  i * bytes_per_delta))
 			_:
-				return []
+				push_error("Component count must be 1, 2 or 4")
+				assert(false, "Component count must be 1, 2 or 4")
+				continue
 	return result
 
 func get_component_count(type: Variant.Type) -> int:
@@ -182,7 +184,7 @@ func from_components(a: Array):
 		TYPE_BOOL:
 			return bool(a[0])
 		TYPE_INT:
-			return int(a[0])
+			return int(roundi(a[0]))
 		TYPE_FLOAT:
 			return float(a[0])
 		TYPE_VECTOR2:

@@ -46,13 +46,11 @@ albedo_color = Color(1, 0, 0, 1)
 [sub_resource type="Resource" id="Resource_sugp2"]
 script = ExtResource("4_jyhfs")
 node_path = NodePath("../Player")
-properties = ["position", "rotation", "velocity", "scale", "visible"]
 metadata/_custom_type_script = "uid://bgh0vw6iftaaw"
 
 [sub_resource type="Resource" id="Resource_jyhfs"]
 script = ExtResource("4_jyhfs")
 node_path = NodePath("../Moving/Ball")
-properties = ["position", "rotation", "scale", "angular_velocity", "linear_velocity"]
 metadata/_custom_type_script = "uid://bgh0vw6iftaaw"
 
 [node name="Main" type="Node3D" unique_id=718706382]
